@@ -108,9 +108,8 @@ class AlarmSchedulerImpl @Inject constructor(
     // If reminder is set just another day than today
     private fun isAnotherDay(selectedDate: LocalDate?): Boolean {
         if (selectedDate == null) return false
-        val endOfDay = selectedDate.untilEndOfDay()
-        Log.wtf("TAG", "isNextDay: selectedDate: $selectedDate endofday: $endOfDay")
-        return selectedDate.fromLocalDateToMillis() > endOfDay
+        val today = LocalDate.now().fromLocalDateToMillis()
+        return selectedDate.fromLocalDateToMillis() > today
     }
 
 

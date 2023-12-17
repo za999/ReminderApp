@@ -53,7 +53,7 @@ fun LocalDate.getAlarmTriggerTime(localTime: LocalTime?): Long {
     return if (localTime != null) {
         this.atTime(localTime)
     } else {
-        LocalDateTime.now()
+        this.atStartOfDay()
     }.fromLocalDateTimeToMillis()
 }
 
