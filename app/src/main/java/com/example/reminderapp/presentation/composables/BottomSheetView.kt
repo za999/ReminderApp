@@ -35,8 +35,6 @@ fun BottomSheetView(
     sheetState: ModalBottomSheetState
 ) {
 
-
-
     Column(
         modifier = modifier
             .padding(16.dp),
@@ -64,8 +62,8 @@ fun BottomSheetView(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DatePickerCard(onIntent = onIntent, state = state)
-            TimePickerCard(onIntent = onIntent, state = state)
+            DatePickerCard(onIntent = onIntent, date = state.date)
+            TimePickerCard(onIntent = onIntent, time = state.time)
         }
 
 

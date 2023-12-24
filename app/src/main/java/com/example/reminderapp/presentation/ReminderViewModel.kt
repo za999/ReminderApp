@@ -96,6 +96,10 @@ class ReminderViewModel @Inject constructor(
             ReminderIntent.AddingNewReminder -> {
                 _state.update {
                     it.copy(
+                        title = "",
+                        description = "",
+                        date = null,
+                        time = null,
                         isAddingNewReminder = true,
                         isEditingReminder = false,
                         //currentReminderToEdit = null

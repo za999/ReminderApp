@@ -28,20 +28,15 @@ import com.example.reminderapp.R
 import com.example.reminderapp.presentation.ReminderIntent
 import com.example.reminderapp.presentation.ReminderState
 import com.example.reminderapp.util.getLocalDateFromMillis
-import com.example.reminderapp.util.getLocalDateTimeFromMillisToString
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun DatePickerCard(
     onIntent: (ReminderIntent) -> Unit,
-    state: ReminderState
+    date: LocalDate?
 ) {
-    // State that is for the date to show on the button
-    var date by remember {
-        mutableStateOf("dd/mm/yy")
-    }
+
     // State to open the datepicker or not
     var showDatePickerDialog by remember {
         mutableStateOf(false)
@@ -64,7 +59,7 @@ fun DatePickerCard(
                 onClick = { showDatePickerDialog = true }) {// If clicking on the button, we show the datepicker.
                 Text(
                     color = Color.Black,
-                    text = date // Here we display the date on the actual button
+                    text = date?.format(DateTimeFormatter.ofPattern("dd/MM/yy")) ?: "dd/mm/yy" // Here we display the date on the actual button
                 )
             }
         }
@@ -78,9 +73,8 @@ fun DatePickerCard(
     // Or canceling, which closes the datepicker.
     if (showDatePickerDialog) {
         DatePickerDialog(
-            onDateSelected = { localDate: LocalDate, selectedDate: String ->
+            onDateSelected = { localDate: LocalDate ->
                 onIntent(ReminderIntent.SetDate(localDate))
-                date = selectedDate
             },
             onDismissRequest = { showDatePickerDialog = false }
         )
@@ -90,16 +84,12 @@ fun DatePickerCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
-     onDateSelected: (LocalDate ,String) -> Unit,
+     onDateSelected: (LocalDate) -> Unit,
      onDismissRequest: () -> Unit,
 ) {
 
     val datePickerState = rememberDatePickerState() //TODO: set initial selectedDatemillis if there is one
 
-    // Converting the selected date to a long and then a string
-    val selectedDate = datePickerState.selectedDateMillis.let {
-        it?.getLocalDateTimeFromMillisToString()
-    } ?: ""
 
     val selectedDateInLocalDataTime = datePickerState.selectedDateMillis.let {
         it?.getLocalDateFromMillis()
@@ -109,15 +99,14 @@ fun DatePickerDialog(
         onDismissRequest = { onDismissRequest() },
         confirmButton = {
             Button(onClick = {
-                onDateSelected(selectedDateInLocalDataTime ,selectedDate) // Setting new date
+                onDateSelected(selectedDateInLocalDataTime) // Setting new date
                 onDismissRequest() // Closing the datepicker dialog
             }) {
                 Text(text = "Confirm")
             }
         },
         dismissButton = {
-            Button(onClick = {
-                onDismissRequest() } // Closing the datepicker dialog
+            Button(onClick = { onDismissRequest() } // Closing the datepicker dialog
             ) {
                 Text(text = "Cancel")
             }

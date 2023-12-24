@@ -1,6 +1,5 @@
 package com.example.reminderapp.presentation.composables
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -18,7 +16,6 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,25 +27,19 @@ import androidx.compose.ui.unit.dp
 import com.example.reminderapp.R
 import com.example.reminderapp.presentation.ReminderIntent
 import com.example.reminderapp.presentation.ReminderState
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.Calendar
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TimePickerCard(
     onIntent: (ReminderIntent) -> Unit,
-    state: ReminderState
+    time: LocalTime?
 ) {
 
-    // State that is for the date to show on the button
-    var time by remember {
-        mutableStateOf("hh:mm")
-    }
     // State to open the datepicker or not
     var showTimePickerDialog by remember {
         mutableStateOf(false)
     }
-
 
     Box(
         contentAlignment = Alignment.Center
@@ -69,7 +60,7 @@ fun TimePickerCard(
                 }) {// If clicking on the button, we show the datepicker.
                 Text(
                     color = Color.Black,
-                    text = time // Here we display the date on the actual button
+                    text = time?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "hh:mm" // Here we display the date on the actual button
                 )
             }
         }
@@ -77,9 +68,8 @@ fun TimePickerCard(
 
     if (showTimePickerDialog) {
         TimePickerDialog(
-            onTimeSelected = { localTime: LocalTime, selectedTime: String ->
+            onTimeSelected = { localTime: LocalTime ->
                 onIntent(ReminderIntent.SetTime(localTime))
-                time = selectedTime
             },
             onDismissRequest = { showTimePickerDialog = false }
         )
@@ -91,7 +81,7 @@ fun TimePickerCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialog(
-    onTimeSelected: (LocalTime, String) -> Unit,
+    onTimeSelected: (LocalTime) -> Unit,
     onDismissRequest: () -> Unit
 ) {
 
@@ -127,10 +117,7 @@ fun TimePickerDialog(
                 // Confirm button
                 TextButton(
                     onClick = {
-                        onTimeSelected(
-                            LocalTime.of(timePickerState.hour, timePickerState.minute) ,
-                            LocalTime.of(timePickerState.hour, timePickerState.minute).toString(),
-                        )
+                        onTimeSelected(LocalTime.of(timePickerState.hour, timePickerState.minute))
                         onDismissRequest()
                     }) {
                     Text(text = "Confirm")
