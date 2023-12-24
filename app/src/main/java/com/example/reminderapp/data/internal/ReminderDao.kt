@@ -15,11 +15,11 @@ interface ReminderDao {
     @Query("SELECT * FROM reminders WHERE deleted = 0")
     fun getAllRemindersFlow(): Flow<List<ReminderEntity>>
 
-    @Query("SELECT * FROM reminders WHERE deleted = 0 AND date IS NOT NULL AND date >= :todaysDate AND date < :nextDaysDate")
-    fun getAllTodaysRemindersFlow(todaysDate: Long, nextDaysDate: Long) : Flow<List<ReminderEntity>>
+    @Query("SELECT * FROM reminders WHERE deleted = 0 AND date IS NOT NULL AND date >= :today AND date < :tomorrow")
+    fun getAllTodaysRemindersFlow(today: Long, tomorrow: Long) : Flow<List<ReminderEntity>>
 
-    @Query("SELECT * FROM reminders WHERE deleted = 0 AND date is NOT NULL")
-    fun getScheduledReminders(): Flow<List<ReminderEntity>>
+    @Query("SELECT * FROM reminders WHERE deleted = 0 AND date is NOT NULL AND date >= :today")
+    fun getScheduledReminders(today: Long): Flow<List<ReminderEntity>>
 
     @Query("SELECT * FROM reminders WHERE _ID = :id")
     suspend fun getReminderEntityById(id: Long): ReminderEntity

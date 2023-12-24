@@ -188,10 +188,12 @@ class ReminderViewModel @Inject constructor(
             combine(
                 _categoryType,
                 repository.getAllReminders(),
-                repository.getScheduledReminders(),
+                repository.getScheduledReminders(
+                    LocalDate.now().untilEndOfDay()
+                ),
                 repository.getDailyReminders(
-                    todaysDate = LocalDate.now().beginningOfDay(),
-                    nextDaysDate = LocalDate.now().untilEndOfDay()
+                    today = LocalDate.now().beginningOfDay(),
+                    tomorrow = LocalDate.now().untilEndOfDay()
                 )) {category, all, scheduled, daily  ->
                 val allReminders = when(all) {
                     is ResultOf.Success -> all.value.reminders

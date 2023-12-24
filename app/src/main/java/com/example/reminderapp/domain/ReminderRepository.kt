@@ -12,9 +12,9 @@ interface ReminderRepository {
 
     fun getAllReminders(): Flow<ResultOf<ReminderInfo>>
 
-    fun getScheduledReminders(): Flow<ResultOf<ReminderInfo>>
+    fun getScheduledReminders(today: Long): Flow<ResultOf<ReminderInfo>>
 
-    fun getDailyReminders(todaysDate: Long, nextDaysDate: Long): Flow<ResultOf<ReminderInfo>>
+    fun getDailyReminders(today: Long, tomorrow: Long): Flow<ResultOf<ReminderInfo>>
 
     suspend fun getReminderById(id: Long): ResultOf<Reminder>
 

@@ -34,8 +34,8 @@ class ReminderRepositoryImpl @Inject constructor(
             .catch { cause: Throwable -> ResultOf.Error(cause) }
     }
 
-    override fun getScheduledReminders(): Flow<ResultOf<ReminderInfo>> {
-        return dao.getScheduledReminders()
+    override fun getScheduledReminders(today: Long): Flow<ResultOf<ReminderInfo>> {
+        return dao.getScheduledReminders(today)
             .flowOn(ioDispatcher)
             .map { ResultOf.Success(it.toReminderInfo()) }
             .catch { cause: Throwable -> ResultOf.Error(cause) }
@@ -43,10 +43,10 @@ class ReminderRepositoryImpl @Inject constructor(
 
 
     override fun getDailyReminders(
-        todaysDate: Long,
-        nextDaysDate: Long
+        today: Long,
+        tomorrow: Long
     ): Flow<ResultOf<ReminderInfo>> {
-        return dao.getAllTodaysRemindersFlow(todaysDate, nextDaysDate)
+        return dao.getAllTodaysRemindersFlow(today, tomorrow)
             .flowOn(ioDispatcher)
             .map { ResultOf.Success(it.toReminderInfo()) }
             .catch { cause: Throwable -> ResultOf.Error(cause) }
