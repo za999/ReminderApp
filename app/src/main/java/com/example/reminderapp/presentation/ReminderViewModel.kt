@@ -3,19 +3,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reminderapp.AlarmScheduler
-import com.example.reminderapp.data.internal.mapper.toReminder
 import com.example.reminderapp.data.internal.mapper.toReminderEntity
 import com.example.reminderapp.data.internal.model.ReminderEntity
 import com.example.reminderapp.domain.ReminderRepository
 import com.example.reminderapp.domain.model.Reminder
 import com.example.reminderapp.util.ResultOf
 import com.example.reminderapp.util.beginningOfDay
-import com.example.reminderapp.util.fromLocalDateTimeToMillis
 import com.example.reminderapp.util.fromLocalDateToMillis
 import com.example.reminderapp.util.fromLocalTimeToMillis
-import com.example.reminderapp.util.getLocalDateFromMillis
 import com.example.reminderapp.util.untilEndOfDay
-import com.example.reminderapp.util.getLocalTimeFromMillis
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -102,7 +96,6 @@ class ReminderViewModel @Inject constructor(
                         time = null,
                         isAddingNewReminder = true,
                         isEditingReminder = false,
-                        //currentReminderToEdit = null
                     )
                 }
             }
@@ -112,14 +105,14 @@ class ReminderViewModel @Inject constructor(
                     it.copy(
                         isEditingReminder = true,
                         isAddingNewReminder = false,
-                        //currentReminderToEdit = intent.reminderToBeEdited
                     )
                 }
-                displayEditReminder(intent.reminderToBeEdited)
+                updateReminderValues(intent.reminderToBeEdited)
             }
 
 
             ReminderIntent.SaveReminder -> {
+                val id = state.value.id
                 val title = state.value.title
                 val desc = state.value.description
                 val date = state.value.date
@@ -130,13 +123,24 @@ class ReminderViewModel @Inject constructor(
                     return
                 }
 
-                val reminderEntity =
+                val reminderEntity = if (state.value.isEditingReminder) {
+                    ReminderEntity(
+                        id = id,
+                        title = title,
+                        description = desc,
+                        date = date?.fromLocalDateToMillis(),
+                        time = time?.fromLocalTimeToMillis()
+                    )
+                } else {
                     ReminderEntity(
                         title = title,
                         description = desc,
                         date = date?.fromLocalDateToMillis(),
                         time = time?.fromLocalTimeToMillis()
                     )
+                }
+
+
 
                 val deferred = viewModelScope.async {  repository.insertOrUpdateReminder(reminderEntity) }
                 viewModelScope.launch {
@@ -154,10 +158,8 @@ class ReminderViewModel @Inject constructor(
                         description = "",
                         date = null,
                         time = null,
-                        //currentReminderToEdit = null
                     )
                 }
-
             }
 
             else -> {}
@@ -165,13 +167,10 @@ class ReminderViewModel @Inject constructor(
     }
 
 
-
-
-
-    private fun displayEditReminder(reminder: Reminder) {
-        //val currentReminderToEdit = state.value.currentReminderToEdit
+    private fun updateReminderValues(reminder: Reminder) {
         _state.update {
             it.copy(
+                id = reminder.id,
                 title = reminder.title,
                 description = reminder.description,
                 date = reminder.date,

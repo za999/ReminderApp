@@ -6,11 +6,11 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class ReminderState(
+    val id: Long = 0L,
     val title: String = "",
     val description: String = "",
     val date: LocalDate? = null,
     val time: LocalTime? = null,
-    val currentReminderToEdit: Reminder? = null,
     val isAddingNewReminder: Boolean = false,
     val isEditingReminder: Boolean = false,
     val isSettingDateAndTime: Boolean = false,

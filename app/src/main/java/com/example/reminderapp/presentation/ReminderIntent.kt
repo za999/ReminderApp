@@ -16,7 +16,5 @@ sealed interface ReminderIntent {
     object AddingNewReminder: ReminderIntent
     data class ShowReminders(val currentCategory: ReminderCategory): ReminderIntent
     object SaveReminder: ReminderIntent
-    object ShowReminderDetailView: ReminderIntent
-    object HideBottomSheet: ReminderIntent
 
 }
