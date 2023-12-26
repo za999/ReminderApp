@@ -39,6 +39,7 @@ fun Navigation(viewModel: ReminderViewModel) {
         }
         composable(route = ViewState.RemindersScreen.route) {
             ReminderDisplay(
+                backgroundColor = DarkBlue,
                 onHome = navigateBack,
                 viewModel = viewModel
             )

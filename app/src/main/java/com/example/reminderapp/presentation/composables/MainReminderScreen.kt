@@ -2,6 +2,7 @@
 
 package com.example.reminderapp.presentation.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,10 +19,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.rememberModalBottomSheetState
@@ -34,7 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -121,21 +126,33 @@ fun MainReminderScreen(
         sheetElevation = 8.dp
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
                     .background(backgroundColor)
             ) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Reminder App",
+                            color = Color.White,
+                            modifier = modifier
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    },
+                    backgroundColor = backgroundColor,
+                )
                 Column(
-                    modifier = Modifier
+                    modifier = modifier
                         .weight(1f)
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
                     Row(
-                        modifier = Modifier
+                        modifier = modifier
                             .fillMaxWidth()
                             .offset(x = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -144,12 +161,9 @@ fun MainReminderScreen(
                         CategoryTabCard(
                             headerTitle = "Today",
                             amountOfReminders = state.dailyReminders.size,
-                            modifier = Modifier
+                            modifier = modifier
                                 .height(75.dp)
-                                .width(175.dp)
-                                .graphicsLayer {
-                                    translationX = (-10).dp.toPx()
-                                },
+                                .weight(1f),
                             shape = RoundedCornerShape(
                                 topStart = 10.dp,
                                 topEnd = 10.dp,
@@ -162,9 +176,9 @@ fun MainReminderScreen(
                         CategoryTabCard(
                             headerTitle = "Scheduled",
                             amountOfReminders = state.scheduledReminders.size, //TODO: Add scheduled size of the list
-                            modifier = Modifier
+                            modifier = modifier
                                 .height(75.dp)
-                                .width(175.dp),
+                                .weight(1f),
                             shape = RoundedCornerShape(
                                 topStart = 10.dp,
                                 topEnd = 10.dp,
@@ -176,12 +190,12 @@ fun MainReminderScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = modifier.height(10.dp))
 
                     CategoryTabCard(
                         headerTitle = "All",
                         amountOfReminders = state.allReminders.size,
-                        modifier = Modifier
+                        modifier = modifier
                             .height(75.dp)
                             .fillMaxWidth(),
                         shape = RoundedCornerShape(
@@ -196,20 +210,19 @@ fun MainReminderScreen(
                 }
 
                 ExtendedFloatingActionButton(
-                    modifier = Modifier
+                    modifier = modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                         .align(Alignment.End),
+                    containerColor = Color.White,
                     shape = RoundedCornerShape(10.dp),
                     text = { Text(text = "Create Reminder", fontWeight = FontWeight.Bold) },
                     icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Create Reminder") },
                     onClick = {
-
                         onIntent(ReminderIntent.AddingNewReminder)
                         if (!sheetState.isVisible) {
                             scope.launch { sheetState.show() }
                         }
-
                     }
                 )
             }
@@ -217,15 +230,3 @@ fun MainReminderScreen(
     }
 }
 
-
-
-
-//@Preview(showBackground = true)
-//@Composable
-//private fun MainReminderScreenPreview(
-//    modifier: Modifier = Modifier,
-//    backgroundColor: Color = DarkBlue
-//) {
-//
-//    MainReminderScreen(backgroundColor = backgroundColor)
-//}
