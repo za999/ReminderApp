@@ -10,7 +10,7 @@ sealed interface ReminderIntent {
     data class SetDescription(val description: String): ReminderIntent
     data class SetDate(val date: LocalDate): ReminderIntent
     data class SetTime(val time: LocalTime): ReminderIntent
-    data class SetReminderAsDone(val isCheckedAsDone: Boolean, val reminder: Reminder): ReminderIntent
+    data class SetReminderAsDone(val reminder: Reminder): ReminderIntent
     data class AddingDateAndTime(val addingDateAndTime: Boolean): ReminderIntent
     data class EditingReminder(val reminderToBeEdited: Reminder): ReminderIntent
     object AddingNewReminder: ReminderIntent

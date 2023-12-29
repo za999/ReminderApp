@@ -31,23 +31,22 @@ import com.example.reminderapp.util.getLocalDateTimeFromMillisToString
 @ExperimentalMaterialApi
 @Composable
 fun ReminderCard(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     reminder: Reminder,
-    onIntent: (ReminderIntent) -> Unit,
+    onEdit: () -> Unit,
+    onReminderDone: () -> Unit,
     showBottomSheet: () -> Unit,
     sheetState: ModalBottomSheetState
 ) {
 
-    var isCheckedAsDone by remember { mutableStateOf(false) }
-    //TODO: change to only show time if reminder has a time set, if not then show date (except for daily reminders).
-    val date = reminder.date?.toString()
-    val time = reminder.time?.toString()
+    val isCheckedAsDone by remember { mutableStateOf(false) }
+
 
     androidx.compose.material.Card(
         shape = RoundedCornerShape(size = 12.dp),
         backgroundColor = Color.White,
         onClick = {
-            onIntent(ReminderIntent.EditingReminder(reminderToBeEdited = reminder))
+            onEdit()
             if (!sheetState.isVisible) {
                 showBottomSheet()
             }
@@ -84,14 +83,7 @@ fun ReminderCard(
                 }
                 Checkbox(
                     checked = isCheckedAsDone,
-                    onCheckedChange = { isCheckedAsDone ->
-                        onIntent(
-                            ReminderIntent.SetReminderAsDone(
-                                isCheckedAsDone = isCheckedAsDone,
-                                reminder = reminder
-                            )
-                        )
-                    }
+                    onCheckedChange = { onReminderDone() }
                 )
 
             }
@@ -103,39 +95,22 @@ fun ReminderCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (date != null) {
+                if (reminder.date != null) {
                     Text(
-                        text = date,
+                        text = reminder.date.toString(),
                         fontWeight = FontWeight.Light,
                         maxLines = 1,
                     )
                 }
 
-                if (time != null) {
+                if (reminder.time != null) {
                     Text(
-                        text = time,
+                        text = reminder.time.toString(),
                         fontWeight = FontWeight.Light,
                         maxLines = 1,
                     )
                 }
             }
-
-
         }
     }
 }
-
-//
-//@Preview
-//@Composable
-//fun ReminderCardPreview() {
-//
-//    ReminderCard(
-//        reminder = Reminder(
-//            0,
-//            "Helloooooooooo",
-//            "test",
-//            null
-//        )
-//    )
-//}

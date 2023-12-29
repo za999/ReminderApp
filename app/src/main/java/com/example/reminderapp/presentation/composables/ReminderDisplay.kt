@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
@@ -78,8 +79,6 @@ fun ReminderDisplay(
     onHome: () -> Unit,
     backgroundColor: Color
 ) {
-    val hideBottomSheet: () -> Unit = { scope.launch { sheetState.hide() }}
-    val showBottomSheet: () -> Unit = { scope.launch { sheetState.show() }}
 
     Scaffold(
         modifier = modifier,
@@ -123,7 +122,7 @@ fun ReminderDisplay(
                     BottomSheetView(
                         state = state,
                         onIntent = onIntent,
-                        onCancel = hideBottomSheet,
+                        onCancel = { scope.launch { sheetState.hide() } },
                         sheetState = sheetState
                     )
 
@@ -146,7 +145,7 @@ fun ReminderDisplay(
 
                     Text(
                         text = headerTitle
-                            .plus("   ")
+                            .plus("  ")
                             .plus(listOfReminders.size),
                         modifier = modifier
                             .align(Alignment.Start)
@@ -156,7 +155,7 @@ fun ReminderDisplay(
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = modifier.height(30.dp))
+                    Spacer(modifier = modifier.height(20.dp))
 
                     Box(
                         modifier = modifier
@@ -169,14 +168,17 @@ fun ReminderDisplay(
                                 .background(Color.Transparent),
                             verticalArrangement = Arrangement.spacedBy(space = 15.dp)
                         ) {
-                            items(listOfReminders.size) { item ->
+                            items(
+                                items = listOfReminders,
+                                key = { reminder -> reminder.id }) { reminder ->
                                 ReminderCard(
                                     modifier = modifier
                                         .fillMaxWidth()
                                         .requiredHeight(125.dp),
-                                    reminder = listOfReminders[item],
-                                    onIntent = onIntent,
-                                    showBottomSheet = showBottomSheet,
+                                    reminder = reminder,
+                                    onEdit = { onIntent(ReminderIntent.EditingReminder(reminderToBeEdited = reminder))},
+                                    onReminderDone = { onIntent(ReminderIntent.SetReminderAsDone(reminder))},
+                                    showBottomSheet = { scope.launch { sheetState.show() } },
                                     sheetState = sheetState
                                 )
                             }

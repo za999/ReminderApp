@@ -76,7 +76,6 @@ fun BottomSheetView(
             ExtendedFloatingActionButton(
                 text = { Text(text = "Cancel") },
                 onClick = {
-//                    onHandleIntent(ReminderIntent.HideBottomSheet)
                     if (sheetState.isVisible) {
                         onCancel()
                     }
@@ -89,16 +88,9 @@ fun BottomSheetView(
                     if (sheetState.isVisible) {
                         onCancel()
                     }
-                },
+                }
             )
         }
 
     }
-
 }
-//
-//@Preview
-//@Composable
-//fun ReminderDetailDialogPreview() {
-//    BottomSheetView()
-//}

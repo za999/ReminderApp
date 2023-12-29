@@ -1,6 +1,5 @@
 package com.example.reminderapp.presentation
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -44,11 +43,6 @@ fun Navigation(viewModel: ReminderViewModel) {
                 viewModel = viewModel
             )
         }
-//        composable(route = ViewState.EditReminderScreen.route) {
-//            //TODO: add edit screen composable
-//        }
-
-
     }
 
 }

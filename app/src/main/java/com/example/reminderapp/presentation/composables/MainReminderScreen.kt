@@ -79,7 +79,7 @@ fun MainReminderScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainReminderScreen(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     backgroundColor: Color,
     onIntent: (ReminderIntent) -> Unit,
     state: ReminderState,
@@ -87,9 +87,6 @@ fun MainReminderScreen(
     scope: CoroutineScope,
     onNavigate: () -> Unit
 ) {
-
-    val hideBottomSheet: () -> Unit = { scope.launch { sheetState.hide() }}
-
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -111,7 +108,7 @@ fun MainReminderScreen(
                     modifier = modifier,
                     state = state,
                     onIntent = onIntent,
-                    onCancel = hideBottomSheet,
+                    onCancel = { scope.launch { sheetState.hide() } },
                     sheetState = sheetState
                 )
 

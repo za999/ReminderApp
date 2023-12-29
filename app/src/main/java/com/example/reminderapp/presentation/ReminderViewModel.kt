@@ -40,7 +40,7 @@ class ReminderViewModel @Inject constructor(
     )
 
     init {
-        updateReminders()
+        getReminders()
     }
 
 
@@ -61,10 +61,8 @@ class ReminderViewModel @Inject constructor(
 
             is ReminderIntent.SetReminderAsDone -> {
                 viewModelScope.launch {
-                    if (intent.isCheckedAsDone) {
-                        val doneReminder = intent.reminder.copy(isDone = true)
-                        mapToEntityAndUpdate(doneReminder)
-                    }
+                    val doneReminder = intent.reminder.copy(isDone = true)
+                    mapToEntityAndUpdate(doneReminder)
                 }
             }
 
@@ -161,8 +159,6 @@ class ReminderViewModel @Inject constructor(
                     )
                 }
             }
-
-            else -> {}
         }
     }
 
@@ -186,7 +182,7 @@ class ReminderViewModel @Inject constructor(
     }
 
 
-    private fun updateReminders() {
+    private fun getReminders() {
         viewModelScope.launch {
             combine(
                 _categoryType,
