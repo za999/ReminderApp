@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.reminderapp.R
 import com.example.reminderapp.presentation.ReminderIntent
-import com.example.reminderapp.presentation.ReminderState
 import com.example.reminderapp.util.getLocalDateFromMillis
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

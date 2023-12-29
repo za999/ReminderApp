@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.example.reminderapp.di.IODispatcher
 import com.example.reminderapp.domain.ReminderRepository
 import com.example.reminderapp.domain.model.Reminder
 import com.example.reminderapp.util.ResultOf
@@ -19,7 +18,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
-
+private const val LOG_TAG = "AlarmScheduler"
 class AlarmSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: ReminderRepository,
@@ -34,12 +33,12 @@ class AlarmSchedulerImpl @Inject constructor(
                 isTodayButLaterInTime(latestReminder.date, latestReminder.time) ||
                 isAnotherDateWithTime(latestReminder.date, latestReminder.time)
             ) {
-                Log.wtf("TAG", "shouldSchedule: ")
                 schedule(latestReminder)
             } else {
-                Log.wtf("TAG", "shouldSchedule else: ")
                 return
             }
+        } else {
+            Log.e(LOG_TAG, "Error occurred fetching latest reminder!")
         }
     }
 
@@ -63,7 +62,6 @@ class AlarmSchedulerImpl @Inject constructor(
 
     private fun schedule(reminder: Reminder) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            Log.wtf("TAG", "schedule id : ${reminder.id}")
             putExtra("REMINDER_ID", reminder.id)
         }
 
@@ -80,9 +78,7 @@ class AlarmSchedulerImpl @Inject constructor(
         )
     }
 
-    // If reminder is set another date than today with time
-
-    //TODO: Refactor this by reading ReminderAppDateTimeScheduling
+    // If reminder is set another date than today with time.
     private fun isAnotherDateWithTime(selectedDate: LocalDate?, selectedTime: LocalTime?): Boolean {
         if (selectedDate == null || selectedTime == null) return false
         val endOfDay = selectedDate.untilEndOfDay()
@@ -95,13 +91,6 @@ class AlarmSchedulerImpl @Inject constructor(
         if (selectedDate == null || selectedTime == null) return false
         val currentTimeMillis = LocalTime.now().fromLocalTimeToMillis()
         val endOfDay = selectedDate.untilEndOfDay()
-        Log.wtf(
-            "TAG", "isTodayButLaterInTime: " +
-                    "selectedDate: $selectedDate " +
-                    "endofday: $endOfDay " +
-                    "selectedTime: $selectedTime" +
-                    "millis: $currentTimeMillis"
-        )
         return selectedDate.fromLocalDateToMillis() < endOfDay && selectedTime.fromLocalTimeToMillis() > currentTimeMillis
     }
 

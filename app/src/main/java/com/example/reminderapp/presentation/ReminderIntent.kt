@@ -2,7 +2,6 @@ package com.example.reminderapp.presentation
 
 import com.example.reminderapp.domain.model.Reminder
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 sealed interface ReminderIntent {
@@ -11,7 +10,6 @@ sealed interface ReminderIntent {
     data class SetDate(val date: LocalDate): ReminderIntent
     data class SetTime(val time: LocalTime): ReminderIntent
     data class SetReminderAsDone(val reminder: Reminder): ReminderIntent
-    data class AddingDateAndTime(val addingDateAndTime: Boolean): ReminderIntent
     data class EditingReminder(val reminderToBeEdited: Reminder): ReminderIntent
     object AddingNewReminder: ReminderIntent
     data class ShowReminders(val currentCategory: ReminderCategory): ReminderIntent

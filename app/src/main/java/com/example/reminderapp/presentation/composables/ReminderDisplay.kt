@@ -1,6 +1,5 @@
 package com.example.reminderapp.presentation.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +13,10 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,16 +24,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.reminderapp.R
 import com.example.reminderapp.domain.model.Reminder
 import com.example.reminderapp.presentation.ReminderIntent
-import com.example.reminderapp.presentation.ReminderState
+import com.example.reminderapp.presentation.UiState
 import com.example.reminderapp.presentation.ReminderViewModel
 import com.example.reminderapp.ui.theme.DarkBlue
 import kotlinx.coroutines.CoroutineScope
@@ -70,7 +65,7 @@ fun ReminderDisplay(
 @Composable
 fun ReminderDisplay(
     modifier: Modifier = Modifier,
-    state: ReminderState,
+    state: UiState,
     listOfReminders: List<Reminder>,
     onIntent: (ReminderIntent) -> Unit,
     headerTitle: String,
@@ -83,50 +78,24 @@ fun ReminderDisplay(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "$headerTitle Reminders",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )},
+            TopBar(
+                headerTitle = headerTitle,
                 backgroundColor = backgroundColor,
-                navigationIcon = {
-                    IconButton(onClick = onHome) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_back_24),
-                            contentDescription = "Back"
-                        )
-                    }
-                }
+                resourceId = R.drawable.arrow_back_24,
+                onBackPressed = onHome
             )
         }
     ) { values ->
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                Column(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(500.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    androidx.compose.material.Text(
-                        text = "Edit Reminder",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-
-                    BottomSheetView(
-                        state = state,
-                        onIntent = onIntent,
-                        onCancel = { scope.launch { sheetState.hide() } },
-                        sheetState = sheetState
-                    )
-
-                }
+                BottomSheetContent(
+                    state = state,
+                    onIntent = onIntent,
+                    onCancel = { scope.launch { sheetState.hide() } },
+                    sheetState = sheetState,
+                    headerTitle = "Edit Reminder"
+                )
             }
         ) {
             Column(

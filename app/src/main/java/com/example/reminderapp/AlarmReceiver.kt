@@ -1,18 +1,12 @@
 package com.example.reminderapp
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.reminderapp.data.internal.model.ReminderEntity
 import com.example.reminderapp.di.IODispatcher
 import com.example.reminderapp.domain.ReminderRepository
 import com.example.reminderapp.domain.model.Reminder
@@ -33,8 +27,7 @@ class AlarmReceiver : BroadcastReceiver() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context?, intent: Intent?) {
         val pendingResult = goAsync()
-        val reminderId = intent?.getLongExtra("REMINDER_ID", -1L) ?: return
-        Log.wtf("TAG", "onReceive id : $reminderId")
+        val reminderId = intent?.getLongExtra("REMINDER_ID", -1L) ?: -1L
         if (reminderId > -1) {
             GlobalScope.launch(ioDispatcher) {
                 try {
@@ -47,6 +40,8 @@ class AlarmReceiver : BroadcastReceiver() {
                     pendingResult.finish()
                 }
             }
+        } else {
+            pendingResult.finish()
         }
     }
 
@@ -72,16 +67,11 @@ class AlarmReceiver : BroadcastReceiver() {
         val notificationManager = context?.let { NotificationManagerCompat.from(it) }
         notification?.let {
             reminder?.let {
-                Log.wtf("TAG", "sendNotification: notify")
                 notificationManager?.notify(
                     it.hashCode(),
                     notification
                 )
             }
         }
-    }
-
-    companion object {
-        const val NOTIFICATION_REQUEST_CODE = 100
     }
 }

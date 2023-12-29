@@ -32,11 +32,11 @@ class ReminderViewModel @Inject constructor(
 
     private val _categoryType = MutableStateFlow(ReminderCategory.VIEWNONE)
 
-    private val _state = MutableStateFlow(ReminderState())
+    private val _state = MutableStateFlow(UiState())
     val state = _state.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        ReminderState()
+        UiState()
     )
 
     init {
@@ -72,16 +72,9 @@ class ReminderViewModel @Inject constructor(
                 }
             }
 
-            // TODO: use for timepicker
             is ReminderIntent.SetTime -> {
                 _state.update {
                     it.copy(time = intent.time)
-                }
-            }
-
-            is ReminderIntent.AddingDateAndTime -> {
-                _state.update {
-                    it.copy(isSettingDateAndTime = intent.addingDateAndTime)
                 }
             }
 
@@ -92,7 +85,6 @@ class ReminderViewModel @Inject constructor(
                         description = "",
                         date = null,
                         time = null,
-                        isAddingNewReminder = true,
                         isEditingReminder = false,
                     )
                 }
@@ -102,7 +94,6 @@ class ReminderViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isEditingReminder = true,
-                        isAddingNewReminder = false,
                     )
                 }
                 updateReminderValues(intent.reminderToBeEdited)

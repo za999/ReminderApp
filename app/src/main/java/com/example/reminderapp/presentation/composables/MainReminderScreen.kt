@@ -2,7 +2,6 @@
 
 package com.example.reminderapp.presentation.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,10 +15,8 @@ import androidx.compose.foundation.layout.offset
 
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -36,16 +33,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.reminderapp.presentation.ReminderCategory
 import com.example.reminderapp.presentation.ReminderIntent
-import com.example.reminderapp.presentation.ReminderState
+import com.example.reminderapp.presentation.UiState
 import com.example.reminderapp.presentation.ReminderViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -82,7 +76,7 @@ fun MainReminderScreen(
     modifier: Modifier,
     backgroundColor: Color,
     onIntent: (ReminderIntent) -> Unit,
-    state: ReminderState,
+    state: UiState,
     sheetState: ModalBottomSheetState,
     scope: CoroutineScope,
     onNavigate: () -> Unit
@@ -91,28 +85,14 @@ fun MainReminderScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(600.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Text(
-                    text = "New Reminder",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-
-                BottomSheetView(
-                    modifier = modifier,
-                    state = state,
-                    onIntent = onIntent,
-                    onCancel = { scope.launch { sheetState.hide() } },
-                    sheetState = sheetState
-                )
-
-            }
+            BottomSheetContent(
+                modifier = modifier,
+                state = state,
+                onIntent = onIntent,
+                onCancel = { scope.launch { sheetState.hide() } },
+                sheetState = sheetState,
+                headerTitle = "New Reminder"
+            )
         },
         sheetShape = RoundedCornerShape(
             bottomStart = 0.dp,
@@ -172,7 +152,7 @@ fun MainReminderScreen(
                         )
                         CategoryTabCard(
                             headerTitle = "Scheduled",
-                            amountOfReminders = state.scheduledReminders.size, //TODO: Add scheduled size of the list
+                            amountOfReminders = state.scheduledReminders.size,
                             modifier = modifier
                                 .height(75.dp)
                                 .weight(1f),
